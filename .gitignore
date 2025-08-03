@@ -219,5 +219,5 @@ __pycache__/
 *.h5
 models/
 checkpoints/
-data/
-data/
+data/processed
+/data/OpenAssistant_oasst1
