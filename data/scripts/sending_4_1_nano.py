@@ -6,13 +6,13 @@ import threading
 
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key="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",  # Ta clé OpenRouter ici
+    api_key="api", 
 )
 
 output_file = "responses_4_1_nano.jsonl"
-input_file = "/Users/tim/Desktop/Code/llm-prompt/data/OpenAssistant_oasst1/filtered_prompts.jsonl"
-max_lines = 10000  # Modifie ici pour changer le nombre de prompts traités
-num_threads = 50  # Nombre de threads en parallèle
+input_file = "/Users/tim/Desktop/Code/llm-prompt-clean/data/OpenAssistant_oasst1/filtered_prompts.jsonl"
+max_lines = 10000  
+num_threads = 50 
 
 lock = threading.Lock()
 error_count = 0

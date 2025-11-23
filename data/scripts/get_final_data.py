@@ -8,7 +8,7 @@ def main():
     similarity_data = []
     
     # Lire le fichier similarities.jsonl
-    with open("/Users/tim/Desktop/Code/llm-prompt/data/OpenAssistant_oasst1/similarities.jsonl", "r", encoding="utf-8") as f:
+    with open("/Users/tim/Desktop/Code/llm-prompt-clean/data/OpenAssistant_oasst1/similarities_large.jsonl", "r", encoding="utf-8") as f:
         for line in f:
             data = json.loads(line)
             similarities.append(data["similarity"])
@@ -21,13 +21,13 @@ def main():
     
     # Charger les réponses du gros fichier pour récupérer les prompts
     responses_big = {}
-    with open("/Users/tim/Desktop/Code/llm-prompt/data/OpenAssistant_oasst1/responses_4_1_big.jsonl", "r", encoding="utf-8") as f:
+    with open("/Users/tim/Desktop/Code/llm-prompt-clean/data/OpenAssistant_oasst1/responses_4_1_big.jsonl", "r", encoding="utf-8") as f:
         for line in f:
             data = json.loads(line)
             responses_big[data["id"]] = data["prompt"]
     
     # Créer le fichier final_data.jsonl avec id, prompt original, et similarités normalisées
-    with open("final_data.jsonl", "w", encoding="utf-8") as f_out:
+    with open("final_data_large.jsonl", "w", encoding="utf-8") as f_out:
         for i, sim_data in enumerate(similarity_data):
             id_ = sim_data["id"]
             original_similarity = sim_data["similarity"]

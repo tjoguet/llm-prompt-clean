@@ -8,12 +8,13 @@ from tqdm import tqdm
 import statistics
 
 # Charger client OpenAI
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="api")
 
 # Fichiers d'entrée
-file_nano = "/Users/tim/Desktop/Code/llm-prompt/data/OpenAssistant_oasst1/responses_4_1_nano.jsonl"
-file_big = "/Users/tim/Desktop/Code/llm-prompt/data/OpenAssistant_oasst1/responses_4_1_big.jsonl"
-output_file = "similarities.jsonl"
+file_nano = "/Users/tim/Desktop/Code/llm-prompt-clean/data/OpenAssistant_oasst1/responses_4_1_nano.jsonl"
+file_nano_filtered = "/Users/tim/Desktop/Code/llm-prompt-clean/data/OpenAssistant_oasst1/filtered_large.jsonl"
+file_big = "/Users/tim/Desktop/Code/llm-prompt-clean/data/OpenAssistant_oasst1/responses_4_1_big.jsonl"
+output_file = "similarities_large.jsonl"
 
 # Charger les réponses dans des dicts {id: response}
 def load_responses(filepath):
@@ -42,7 +43,7 @@ def filter_large_file(larger_file, smaller_file):
 # Obtenir embedding via l'API
 def get_embedding(text):
     response = client.embeddings.create(
-        model="text-embedding-3-small",
+        model="text-embedding-3-large",
         input=text
     )
     return response.data[0].embedding
@@ -54,18 +55,34 @@ def cosine_sim(vec1, vec2):
 # Traitement principal
 def main():
     # Étape de filtrage
-    filter_large_file(file_nano, file_big)
+    # filter_large_file(file_nano, file_big)
+
     # Charger les réponses
-
-    small_responses = load_responses(filtered_large_file)
+    small_responses = load_responses(file_nano_filtered)
     large_responses = load_responses(file_big)
-
-
     ids = set(small_responses.keys()) & set(large_responses.keys())
+    
+
+    # Charger les IDs déjà traités
+    already_done_ids = set()
+    if os.path.exists(output_file):
+        with open(output_file, "r", encoding="utf-8") as f:
+            for line in f:
+                try:
+                    data = json.loads(line)
+                    already_done_ids.add(data["id"])
+                except:
+                    pass  # Ligne corrompue
+
+    # Reste des IDs à traiter
+    remaining_ids = sorted(ids - already_done_ids)
+
+    print(f"{len(already_done_ids)} IDs déjà traités.")
+    print(f"{len(remaining_ids)} IDs à traiter.")
 
     similarities = []
-    with open(output_file, "w", encoding="utf-8") as f_out:
-        for id_ in tqdm(ids):
+    with open(output_file, "a", encoding="utf-8") as f_out:
+        for id_ in tqdm(remaining_ids):
             try:
                 emb_small = get_embedding(small_responses[id_])
                 emb_large = get_embedding(large_responses[id_])
@@ -74,16 +91,17 @@ def main():
                 f_out.write(json.dumps({
                     "id": id_,
                     "similarity": similarity
-                }) + "\n")
-                time.sleep(0.2)  # Évite de dépasser les limites de l'API
+                }, ensure_ascii=False) + "\n")
+                f_out.flush()
+                time.sleep(0.2)  # éviter les limites API
             except Exception as e:
                 print(f"[ERROR] {id_}: {e}")
 
-    # Calculer et afficher les statistiques
+    # Calculer et afficher les stats globales
     if similarities:
         mean_similarity = np.mean(similarities)
         median_similarity = np.median(similarities)
-        print(f"\nStatistiques des similarités:")
+        print(f"\nStatistiques des nouvelles similarités:")
         print(f"Moyenne: {mean_similarity:.4f}")
         print(f"Médiane: {median_similarity:.4f}")
         print(f"Nombre de paires comparées: {len(similarities)}")

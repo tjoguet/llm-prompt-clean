@@ -1,11 +1,6 @@
 import json
 import numpy as np
 import matplotlib.pyplot as plt
-from sentence_transformers import SentenceTransformer
-from xgboost import XGBRegressor, callback
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-from tqdm import tqdm
 import warnings
 import os
 import pickle
@@ -15,7 +10,7 @@ def load_data_from_final_data():
     prompts = []
     scores = []
     
-    with open("/Users/tim/Desktop/Code/llm-prompt/data/OpenAssistant_oasst1/final_data.jsonl", "r", encoding="utf-8") as f:
+    with open("/Users/tim/Desktop/Code/llm-prompt-clean/data/OpenAssistant_oasst1/final_data_large.jsonl", "r", encoding="utf-8") as f:
         for line in f:
             data = json.loads(line)
             prompts.append(data["prompt"])

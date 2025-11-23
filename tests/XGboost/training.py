@@ -15,7 +15,7 @@ def load_data_from_final_data():
     prompts = []
     scores = []
     
-    with open("/Users/tim/Desktop/Code/llm-prompt/data/OpenAssistant_oasst1/final_data.jsonl", "r", encoding="utf-8") as f:
+    with open("/Users/tim/Desktop/Code/llm-prompt-clean/data/OpenAssistant_oasst1/final_data.jsonl", "r", encoding="utf-8") as f:
         for line in f:
             data = json.loads(line)
             prompts.append(data["prompt"])
@@ -24,7 +24,7 @@ def load_data_from_final_data():
     return prompts, np.array(scores)
 
 def get_or_create_embeddings(prompts, encoder):
-    embeddings_file = "/Users/tim/Desktop/Code/llm-prompt/data/OpenAssistant_oasst1/embeddings_e5.pkl"
+    embeddings_file = "/Users/tim/Desktop/Code/llm-prompt-clean/data/OpenAssistant_oasst1/embeddings_e5.pkl"
     
     if os.path.exists(embeddings_file):
         print("📂 Chargement des embeddings existants...")
